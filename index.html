@@ -44,6 +44,7 @@
     const startBtn = document.getElementById('start');
     const modeloContainer = document.getElementById('modeloContainer');
     let modeloCargado = false;
+    let modelViewerElement = null;
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -62,34 +63,42 @@
         console.log('Texto reconocido:', texto);
         startBtn.textContent = "🎤 Activar asistente de voz";
 
+        // Mostrar el modelo
         if (!modeloCargado && (texto.includes('modelo') || texto.includes('cuerpo') || texto.includes('mostrar'))) {
-          // 1. Cargar el script de model-viewer DINÁMICAMENTE
           const script = document.createElement('script');
           script.type = 'module';
           script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
 
           script.onload = () => {
-            // 2. Crear el componente model-viewer cuando el script esté cargado
-            const modelViewer = document.createElement('model-viewer');
-            modelViewer.setAttribute('src', 'anatomy_in_action_-_study_01.glb');
-            modelViewer.setAttribute('alt', 'Modelo 3D de cuerpo humano');
-            modelViewer.setAttribute('auto-rotate', '');
-            modelViewer.setAttribute('camera-controls', '');
-            modelViewer.setAttribute('ar', '');
-            modelViewer.style.width = '100%';
-            modelViewer.style.height = '600px';
-            modelViewer.style.backgroundColor = '#222';
+            modelViewerElement = document.createElement('model-viewer');
+            modelViewerElement.setAttribute('src', 'anatomy_in_action_-_study_01.glb');
+            modelViewerElement.setAttribute('alt', 'Modelo 3D de cuerpo humano');
+            modelViewerElement.setAttribute('auto-rotate', '');
+            modelViewerElement.setAttribute('camera-controls', '');
+            modelViewerElement.setAttribute('ar', '');
+            modelViewerElement.style.width = '100%';
+            modelViewerElement.style.height = '600px';
+            modelViewerElement.style.backgroundColor = '#222';
 
-            modeloContainer.appendChild(modelViewer);
+            modeloContainer.appendChild(modelViewerElement);
             modeloCargado = true;
             alert('Modelo cargado correctamente.');
           };
 
           document.body.appendChild(script);
-        } else if (modeloCargado) {
+
+        // Ocultar el modelo
+        } else if (modeloCargado && texto.includes('ocultar')) {
+          modeloContainer.removeChild(modelViewerElement);
+          modelViewerElement = null;
+          modeloCargado = false;
+          alert('Modelo ocultado correctamente.');
+
+        // Mensaje si ya está cargado
+        } else if (modeloCargado && (texto.includes('modelo') || texto.includes('mostrar'))) {
           alert('El modelo ya está cargado.');
         } else {
-          alert('No entendí. Intenta decir: "mostrar modelo" o "cuerpo humano".');
+          alert('No entendí. Intenta decir: "mostrar modelo" o "ocultar modelo".');
         }
       };
 
