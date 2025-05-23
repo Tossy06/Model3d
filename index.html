@@ -12,13 +12,7 @@
       margin: 0;
       padding: 20px;
     }
-    model-viewer {
-      width: 100%;
-      height: 600px;
-      background-color: #222;
-      margin-bottom: 20px;
-      display: none; /* 🔴 Ocultamos al inicio */
-    }
+
     #start {
       font-size: 18px;
       padding: 10px 20px;
@@ -29,31 +23,31 @@
       color: white;
       margin-top: 20px;
     }
+
     #start:hover {
       background-color: #006edc;
     }
+
+    #modeloContainer {
+      margin-top: 20px;
+    }
   </style>
+  <!-- Solo cargamos el script de model-viewer para poder usarlo cuando se necesite -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
 
   <h1>Modelo 3D: Cuerpo humano en movimiento</h1>
 
-  <!-- 🔴 Oculto al inicio -->
-  <model-viewer 
-    id="modelo3D"
-    src="anatomy_in_action_-_study_01.glb"
-    alt="Modelo 3D de cuerpo en movimiento"
-    auto-rotate 
-    camera-controls 
-    ar>
-  </model-viewer>
+  <!-- Aquí insertaremos el modelo dinámicamente -->
+  <div id="modeloContainer"></div>
 
   <button id="start">🎤 Activar asistente de voz</button>
 
   <script>
-    const modelViewer = document.getElementById('modelo3D');
     const startBtn = document.getElementById('start');
+    const modeloContainer = document.getElementById('modeloContainer');
+    let modeloCargado = false;
 
     // Verificamos compatibilidad
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -73,9 +67,24 @@
         console.log('Texto reconocido:', texto);
         startBtn.textContent = "🎤 Activar asistente de voz";
 
-        if (texto.includes('modelo') || texto.includes('cuerpo') || texto.includes('mostrar')) {
-          modelViewer.style.display = 'block'; // 👈 Mostramos el modelo
+        if (!modeloCargado && (texto.includes('modelo') || texto.includes('cuerpo') || texto.includes('mostrar'))) {
+          // Crear el modelo dinámicamente
+          const modelViewer = document.createElement('model-viewer');
+          modelViewer.setAttribute('src', 'anatomy_in_action_-_study_01.glb');
+          modelViewer.setAttribute('alt', 'Modelo 3D de cuerpo en movimiento');
+          modelViewer.setAttribute('auto-rotate', '');
+          modelViewer.setAttribute('camera-controls', '');
+          modelViewer.setAttribute('ar', '');
+          modelViewer.style.width = '100%';
+          modelViewer.style.height = '600px';
+          modelViewer.style.backgroundColor = '#222';
+
+          modeloContainer.appendChild(modelViewer);
+          modeloCargado = true;
+
           alert('Modelo del cuerpo humano cargado.');
+        } else if (modeloCargado) {
+          alert('El modelo ya está visible.');
         } else {
           alert('No entendí. Intenta decir: "mostrar modelo" o "cuerpo humano".');
         }
