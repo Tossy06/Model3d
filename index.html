@@ -17,6 +17,7 @@
       height: 600px;
       background-color: #222;
       margin-bottom: 20px;
+      display: none; /* 🔴 Ocultamos al inicio */
     }
     #start {
       font-size: 18px;
@@ -38,6 +39,7 @@
 
   <h1>Modelo 3D: Cuerpo humano en movimiento</h1>
 
+  <!-- 🔴 Oculto al inicio -->
   <model-viewer 
     id="modelo3D"
     src="anatomy_in_action_-_study_01.glb"
@@ -71,10 +73,11 @@
         console.log('Texto reconocido:', texto);
         startBtn.textContent = "🎤 Activar asistente de voz";
 
-        if (texto.includes('hola') || texto.includes('modelo') || texto.includes('cuerpo')) {
-          alert('Este es el modelo del cuerpo humano en movimiento.');
+        if (texto.includes('modelo') || texto.includes('cuerpo') || texto.includes('mostrar')) {
+          modelViewer.style.display = 'block'; // 👈 Mostramos el modelo
+          alert('Modelo del cuerpo humano cargado.');
         } else {
-          alert('No entendí. Intenta decir: "modelo" o "cuerpo humano".');
+          alert('No entendí. Intenta decir: "mostrar modelo" o "cuerpo humano".');
         }
       };
 
