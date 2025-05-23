@@ -1,26 +1,93 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Visualizador 3D</title>
+  <meta charset="UTF-8" />
+  <title>Visualizador 3D con Asistente de Voz</title>
   <style>
-    body{
-        background-color: #000;
-        color: #fff;
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    model-viewer {
+      width: 100%;
+      height: 600px;
+      background-color: #222;
+      margin-bottom: 20px;
+    }
+    #start {
+      font-size: 18px;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 8px;
+      border: none;
+      background-color: #0b84ff;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    #start:hover {
+      background-color: #006edc;
     }
   </style>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
-  <h1>Modelo 3D: Cuerpo humano en moviento</h1>
+
+  <h1>Visualizador 3D: Cuerpo humano en movimiento</h1>
 
   <model-viewer 
+    id="modelo3D"
     src="anatomy_in_action_-_study_01.glb" 
-    alt="Modelo 3D d cuerpo en movimiento"
+    alt="Modelo 3D de cuerpo en movimiento"
     auto-rotate 
     camera-controls 
-    ar
-    style="width: 100%; height: 600px; color: white">
+    ar>
   </model-viewer>
+
+  <button id="start">Hablar para cambiar modelo</button>
+
+  <script>
+    const modelViewer = document.getElementById('modelo3D');
+    const startBtn = document.getElementById('start');
+
+    // Checar soporte de la API
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Tu navegador no soporta reconocimiento de voz. Prueba con Chrome.');
+    } else {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'es-ES';
+
+      startBtn.addEventListener('click', () => {
+        recognition.start();
+        startBtn.textContent = "Escuchando...";
+      });
+
+      recognition.onresult = (event) => {
+        const texto = event.results[0][0].transcript.toLowerCase();
+        console.log('Texto reconocido:', texto);
+        startBtn.textContent = "Hablar para cambiar modelo";
+
+        if (texto.includes('sistema digestivo')) {
+          alert('Cargando modelo del sistema digestivo');
+          modelViewer.setAttribute('src', 'https://tu-repositorio.github.io/modelos/sistema_digestivo.glb');
+        } else if (texto.includes('cuerpo en movimiento')) {
+          alert('Cargando modelo del cuerpo en movimiento');
+          modelViewer.setAttribute('src', 'https://tu-repositorio.github.io/modelos/anatomy_in_action_-_study_01.glb');
+        } else {
+          alert('No entendí el comando, intenta decir "sistema digestivo" o "cuerpo en movimiento".');
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Error en reconocimiento de voz:', event.error);
+        startBtn.textContent = "Hablar para cambiar modelo";
+      };
+    }
+  </script>
+
 </body>
 </html>
