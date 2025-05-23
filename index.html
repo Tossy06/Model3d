@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Visualizador 3D con Asistente de Voz</title>
+  <title>Visualizador 3D por Voz</title>
   <style>
     body {
       background-color: #000;
@@ -32,16 +32,12 @@
       margin-top: 20px;
     }
   </style>
-  <!-- Solo cargamos el script de model-viewer para poder usarlo cuando se necesite -->
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
 
   <h1>Modelo 3D: Cuerpo humano en movimiento</h1>
 
-  <!-- Aquí insertaremos el modelo dinámicamente -->
   <div id="modeloContainer"></div>
-
   <button id="start">🎤 Activar asistente de voz</button>
 
   <script>
@@ -49,7 +45,6 @@
     const modeloContainer = document.getElementById('modeloContainer');
     let modeloCargado = false;
 
-    // Verificamos compatibilidad
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       alert('Tu navegador no soporta reconocimiento de voz. Usa Google Chrome.');
@@ -68,23 +63,31 @@
         startBtn.textContent = "🎤 Activar asistente de voz";
 
         if (!modeloCargado && (texto.includes('modelo') || texto.includes('cuerpo') || texto.includes('mostrar'))) {
-          // Crear el modelo dinámicamente
-          const modelViewer = document.createElement('model-viewer');
-          modelViewer.setAttribute('src', 'anatomy_in_action_-_study_01.glb');
-          modelViewer.setAttribute('alt', 'Modelo 3D de cuerpo en movimiento');
-          modelViewer.setAttribute('auto-rotate', '');
-          modelViewer.setAttribute('camera-controls', '');
-          modelViewer.setAttribute('ar', '');
-          modelViewer.style.width = '100%';
-          modelViewer.style.height = '600px';
-          modelViewer.style.backgroundColor = '#222';
+          // 1. Cargar el script de model-viewer DINÁMICAMENTE
+          const script = document.createElement('script');
+          script.type = 'module';
+          script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
 
-          modeloContainer.appendChild(modelViewer);
-          modeloCargado = true;
+          script.onload = () => {
+            // 2. Crear el componente model-viewer cuando el script esté cargado
+            const modelViewer = document.createElement('model-viewer');
+            modelViewer.setAttribute('src', 'anatomy_in_action_-_study_01.glb');
+            modelViewer.setAttribute('alt', 'Modelo 3D de cuerpo humano');
+            modelViewer.setAttribute('auto-rotate', '');
+            modelViewer.setAttribute('camera-controls', '');
+            modelViewer.setAttribute('ar', '');
+            modelViewer.style.width = '100%';
+            modelViewer.style.height = '600px';
+            modelViewer.style.backgroundColor = '#222';
 
-          alert('Modelo del cuerpo humano cargado.');
+            modeloContainer.appendChild(modelViewer);
+            modeloCargado = true;
+            alert('Modelo cargado correctamente.');
+          };
+
+          document.body.appendChild(script);
         } else if (modeloCargado) {
-          alert('El modelo ya está visible.');
+          alert('El modelo ya está cargado.');
         } else {
           alert('No entendí. Intenta decir: "mostrar modelo" o "cuerpo humano".');
         }
@@ -93,7 +96,7 @@
       recognition.onerror = (event) => {
         console.error('Error de reconocimiento:', event.error);
         startBtn.textContent = "🎤 Activar asistente de voz";
-        alert('Hubo un error con el micrófono. ¿Permitiste el acceso?');
+        alert('Hubo un error con el micrófono.');
       };
     }
   </script>
