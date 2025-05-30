@@ -35,7 +35,7 @@
 </head>
 <body>
 
-  <h1>Modelo 3D: Cuerpo humano en movimiento</h1>
+  <h1>ALGUNA PARTES DEL CUERPO</h1>
 
   <div id="modeloContainer"></div>
   <button id="start">🎤 Activar asistente de voz</button>
@@ -48,7 +48,7 @@
     const modelos = {
       cuerpo: 'anatomy_in_action_-_study_01.glb',
       corazon: 'heart_model.glb',         // Reemplaza con la URL real del modelo del corazón
-      musculos: 'realistic_human_heart.glb'        // Reemplaza con la URL real del modelo de músculos
+      esqueleto: 'realistic_human_heart.glb'        // Reemplaza con la URL real del modelo de músculos
     };
 
     const cargarModelo = (nombreModelo, altText) => {
@@ -102,14 +102,14 @@
           cargarModelo('cuerpo', 'Modelo 3D del cuerpo humano');
         } else if (texto.includes('corazón')) {
           cargarModelo('corazon', 'Modelo 3D del corazón humano');
-        } else if (texto.includes('músculos') || texto.includes('musculos')) {
-          cargarModelo('musculos', 'Modelo 3D de los músculos humanos');
+        } else if (texto.includes('esqueleto') || texto.includes('esqueleto')) {
+          cargarModelo('esqueleto', 'Modelo 3D de los músculos humanos');
         } else if (modeloActual && texto.includes('ocultar')) {
           modeloContainer.removeChild(modeloActual);
           modeloActual = null;
           alert('Modelo ocultado correctamente.');
         } else {
-          alert('No entendí. Intenta decir: "cuerpo", "corazón", "músculos" u "ocultar modelo".');
+          alert('No entendí. Intenta decir: "cuerpo", "corazón", "esqueleto" u "ocultar modelo".');
         }
       };
 
